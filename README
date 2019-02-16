@@ -1,1 +1,74 @@
-TODO: JUSTIN: FILL THIS IN
+TODO: JUSTIN: CLEAN THIS UP AND REFERENCE THE BLOG POST ONCE YOU MAKE IT!
+
+***Build the docker image from the source repo
+***Publish the docker image to a registry where you can access it
+***Deploy the following service to your kubernetes system:
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: audit-webhook-service
+spec:
+  selector:
+    app: audit-webhook
+  ports:
+    - protocol: TCP
+      port: 80
+
+***Deploy the following deployment to your kubernetes system (note - you need your own "regcred" secret deployed and need to set your image appropriately):
+	***(NOTE:  The "command" shouldn't really be necessary, as it should be set via Dockerfile, but I couldn't get it to work...it works this way)
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: audit-webhook-deployment
+  labels:
+    app: audit-webhook
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: audit-webhook
+  template:
+    metadata:
+      labels:
+        app: audit-webhook
+    spec:
+      containers:
+      - name: audit-webhook-application
+        image: wfmjdcimagecr.azurecr.io/k8s-audit-webhook:build-1803-v1
+        command: ["dotnet.exe", "kubernetes-audit-webhook.dll"]
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: regcred
+
+***Determine the IP address of the service you just deployed
+***Create a file on your master node called "audit-webhook-kubeconfig" in the /etc/kubernetes directory, with the following text (update the IP with the IP of your service you created):
+apiVersion: v1
+clusters:
+- cluster:
+    server: http://10.0.245.224/api/audits
+  name: audit-webhook-service
+contexts:
+- context:
+    cluster: audit-webhook-service
+    user: ""
+  name: default-context
+current-context: default-context
+kind: Config
+preferences: {}
+users: []
+
+***Modify the /etc/kubernetes/manifests/kube-apiserver.yaml file to add the following parameter:
+ "--audit-webhook-config-file=/etc/kubernetes/audit-webhook-kubeconfig",
+ 
+***Delete the kube-apiserver pod so it's forced to restart with the new configuration (or just do sudo systemctl restart kubelet.service)
+
+***View the logs for your pod to see the output!!!
+
+
+***OTHER STUFF TO EVENTUALLY CONSIDER:
+- Get it working with TLS/SSL
+- Use the kubernetes service host name instead of hard-coding the IP address in the kubeconfig
+- Push to OMS instead of STDOUT on the pod
+- What else?
