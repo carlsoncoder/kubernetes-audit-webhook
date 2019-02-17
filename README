@@ -71,4 +71,5 @@ users: []
 - Get it working with TLS/SSL
 - Use the kubernetes service host name instead of hard-coding the IP address in the kubeconfig
 - Push to OMS instead of STDOUT on the pod
+- Figure out how to use certificate/credentials to call the webhook service
 - What else?
