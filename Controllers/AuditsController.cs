@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace kubernetes_audit_webhook.Controllers
+namespace kubernetes_audits.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -25,11 +25,21 @@ namespace kubernetes_audit_webhook.Controllers
                 foreach (var auditEvent in itemsArray.Children())
                 {
                     var timestamp = auditEvent["stageTimestamp"];
-                    var level = auditEvent["level"].ToString();
-                    var stage = auditEvent["stage"].ToString();
-                    var requestURI = auditEvent["requestURI"].ToString();
-                    var verb = auditEvent["verb"].ToString();
-                    var username = auditEvent["user"]["username"].ToString();
+                    var level = auditEvent["level"];
+                    var stage = auditEvent["stage"];
+                    var requestURI = auditEvent["requestURI"];
+                    var verb = auditEvent["verb"];
+
+                    var username = "UNKNOWN";
+                    var userElement = auditEvent["user"];
+                    if (userElement != null)
+                    {
+                        var userNameElement = userElement["username"];
+                        if (userNameElement != null)
+                        {
+                            username = userElement["username"].ToString();
+                        }
+                    }
 
                     string sourceIPValue = "";
                     JArray sourceIPArray = (JArray)auditEvent["sourceIPs"];
