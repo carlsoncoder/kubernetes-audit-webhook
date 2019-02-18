@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace kubernetes_audits.Controllers
+namespace kubernetes_audit_webhook.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
