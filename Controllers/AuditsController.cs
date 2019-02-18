@@ -37,7 +37,7 @@ namespace kubernetes_audit_webhook.Controllers
                         var userNameElement = userElement["username"];
                         if (userNameElement != null)
                         {
-                            username = userElement["username"].ToString();
+                            username = userNameElement.ToString();
                         }
                     }
 
