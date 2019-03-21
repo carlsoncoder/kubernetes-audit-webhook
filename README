@@ -1,4 +1,4 @@
-TODO: JUSTIN: CLEAN THIS UP AND REFERENCE THE BLOG POST ONCE YOU MAKE IT!
+More detail on this can be found in my blog post [here](https://talkcloudlytome.com/implementing-an-audit-webhook-for-kubernetes/)
 
 ***Build the docker image from the source repo
 ***Publish the docker image to a registry where you can access it
